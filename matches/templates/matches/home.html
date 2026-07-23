@@ -1,16 +1,142 @@
-<h1>چندچند</h1>
-{% for league in leagues %}
-<a href="{% url 'league_page' league.code %}"><button>{{league.persian_name}}<br></button></a>
-{% endfor %}
-<br><br><br>
-{% for math in today_matches %}
-{{math.league}}: {{math.home_team.persian_name}} VS {{math.away_team.persian_name}}
-{% empty %}
-    <p>هیچ مسابقه‌ای برای امروز  یافت نشد.</p>
-{% endfor %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>چندچند | نتایج زنده فوتبال</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Vazirmatn Font -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.0.0/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f8fafc; /* slate-50 */
+        }
+        /* کاستوم اسکرول‌بار برای زیبایی بیشتر */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
 
-<br><br>
+    <!-- Header / Navbar -->
+    <nav class="bg-slate-800/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex-shrink-0">
+                    <a href="{% url 'home' %}" class="text-3xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+                        چندچند ⚽
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-{% for team in teams %}
-<a href="{% url 'team_info' team.short_name %}">{{team.persian_name}}</a><br><br>
-{% endfor %}
+    <!-- Main Content -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- Hero Section -->
+        <div class="bg-gradient-to-br from-blue-900/50 to-slate-800 rounded-2xl p-8 mb-10 border border-slate-700 shadow-2xl text-center">
+            <h1 class="text-2xl md:text-4xl font-bold mb-4">به‌روزترین نتایج فوتبال اروپا</h1>
+            <p class="text-slate-400 text-sm md:text-base">پیگیری لحظه‌ای مسابقات، لیگ‌ها و تیم‌های محبوب شما</p>
+        </div>
+
+        بازی‌های امروز
+        <div class="mb-12">
+            <div class="flex items-center mb-6">
+                <div class="w-2 h-6 bg-emerald-500 rounded-full ml-3 animate-pulse"></div>
+                <h2 class="text-2xl font-bold text-white">بازی‌های امروز</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for match in today_matches %}
+                <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:border-emerald-500/50 transition-all duration-300 shadow-lg group">
+                    <div class="text-center text-xs text-slate-400 mb-4 pb-2 border-b border-slate-700 group-hover:border-emerald-500/30 transition-colors">
+                        {{ match.league.persian_name|default:match.league.name }}
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <!-- Home Team -->
+                        <div class="flex flex-col items-center w-1/3">
+                            <span class="font-bold text-center text-sm md:text-base">{{ match.home_team.persian_name|default:match.home_team.name }}</span>
+                        </div>
+                        
+                        <!-- Score / Time -->
+                        <div class="flex flex-col items-center w-1/3">
+                            {% if match.status == 'SCHEDULED' or match.status == 'TIMED' %}
+                                <span class="bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-sm font-mono tracking-widest">{{ match.starting_at|time:"H:i" }}</span>
+                            {% else %}
+                                <div class="bg-slate-900 text-emerald-400 px-4 py-2 rounded-lg text-xl font-bold shadow-inner flex items-center gap-2">
+                                    <span>{{ match.home_score|default:"0" }}</span>
+                                    <span class="text-slate-500">-</span>
+                                    <span>{{ match.away_score|default:"0" }}</span>
+                                </div>
+                            {% endif %}
+                            <span class="text-xs text-slate-500 mt-2">{{ match.get_status_display }}</span>
+                        </div>
+
+                        <!-- Away Team -->
+                        <div class="flex flex-col items-center w-1/3">
+                            <span class="font-bold text-center text-sm md:text-base">{{ match.away_team.persian_name|default:match.away_team.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full bg-slate-800/50 rounded-xl p-8 text-center border border-slate-700 border-dashed">
+                    <p class="text-slate-400 text-lg">موردی برای امروز یافت نشد 😴</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr class="border-slate-700 my-10">
+
+        لیگ‌های معتبر
+        <div class="mb-12">
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                🏆 لیگ‌های معتبر
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {% for league in leagues %}
+                <a href="{% url 'league_page' league.code %}" class="bg-slate-800 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center gap-3 hover:bg-blue-600/20 hover:border-blue-500 transition-all duration-300 group">
+                    {% if league.logo_url %}
+                        <img src="{{ league.logo_url }}" alt="{{ league.name }}" class="w-12 h-12 object-contain group-hover:scale-110 transition-transform">
+                    {% else %}
+                        <div class="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center text-xl">🏟️</div>
+                    {% endif %}
+                    <span class="font-medium text-sm text-center">{{ league.persian_name|default:league.name }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <hr class="border-slate-700 my-10">
+
+        جستجوی سریع تیم‌ها
+        <div>
+            <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                🛡️ تیم‌ها
+            </h2>
+            <div class="flex flex-wrap gap-2">
+                {% for team in teams %}
+                <a href="{% url 'team_info' team.short_name %}" class="inline-block bg-slate-800 border border-slate-700 text-slate-300 text-xs md:text-sm px-4 py-2 rounded-full hover:bg-slate-700 hover:text-white hover:border-slate-500 transition-colors">
+                    {{ team.persian_name|default:team.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 bg-slate-900 mt-12 py-8 text-center text-slate-500 text-sm">
+        <p>پروژه چندچند | توسعه داده شده با ❤️ و Django</p>
+    </footer>
+
+</body>
+</html>
