@@ -89,7 +89,12 @@
 
                     <div class="text-xs text-slate-400 pt-3 mt-3 border-t border-slate-700/60 flex justify-between items-center">
                         <span class="bg-slate-900 text-slate-300 px-2.5 py-1 rounded">{{ match.get_status_display }}</span>
-                        <span class="font-mono text-slate-300">{{ match.starting_at }}</span>
+                        {% load jalali_tags %}
+
+                        
+                        <span class="bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-sm font-mono">
+                            {{ match.starting_at|to_jalali }}
+                        </span>
                     </div>
                 </div>
                 {% empty %}
