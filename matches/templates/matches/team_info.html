@@ -1,0 +1,19 @@
+<h1>{{team.persian_name}}</h1>
+
+<h2>لیست بازی های در خانه</h2>
+{% for match in home_matches %}
+{{match.home_team.persian_name}} VS {{match.away_team.persian_name}} <br>
+time: {{match.starting_at}}
+league: {{match.league.persian_name}}
+
+{% endfor %}
+
+<br><br><br>
+
+<h2>لیست بازی های خارج از خانه</h2>
+{% for match in away_matches %}
+{{match.home_team.persian_name}} VS {{match.away_team.persian_name}} <br>
+time: {{match.starting_at}}
+league: {{match.league.persian_name}}
+
+{% endfor %}

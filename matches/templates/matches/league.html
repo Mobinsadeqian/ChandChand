@@ -1,0 +1,10 @@
+{% for match in matches %}
+    <p>
+        <span style="color: red;">{{ match.home_team.persian_name }}</span> 
+        VS 
+        <span style="color: red;">{{ match.away_team.persian_name }}</span> 
+        | زمان: {{ match.starting_at }}
+    </p>
+{% empty %}
+    <p>هیچ مسابقه‌ای برای این لیگ یافت نشد.</p>
+{% endfor %}

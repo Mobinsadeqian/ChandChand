@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لیست بازی‌ها</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; padding: 20px; }
+        .match-box { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>لیست جدیدترین بازی‌ها</h1>
+    
+    {% for match in matches %}
+        <div class="match-box">
+            <strong>{{ match.league.name }}</strong> (هفته {{ match.matchday }})<br>
+            {{ match.home_team.name }} 
+            <b>{{ match.home_score|default:"-" }}</b> - <b>{{ match.away_score|default:"-" }}</b> 
+            {{ match.away_team.name }}<br>
+            <small>وضعیت: {{ match.status }}</small>
+            {{match.starting_at}}
+        </div>
+    {% empty %}
+        <p>هیچ بازی‌ای در دیتابیس یافت نشد.</p>
+    {% endfor %}
+
+</body>
+</html>

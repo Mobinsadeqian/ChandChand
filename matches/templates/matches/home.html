@@ -1,0 +1,16 @@
+<h1>چندچند</h1>
+{% for league in leagues %}
+<a href="{% url 'league_page' league.code %}"><button>{{league.persian_name}}<br></button></a>
+{% endfor %}
+<br><br><br>
+{% for math in today_matches %}
+{{math.league}}: {{math.home_team.persian_name}} VS {{math.away_team.persian_name}}
+{% empty %}
+    <p>هیچ مسابقه‌ای برای امروز  یافت نشد.</p>
+{% endfor %}
+
+<br><br>
+
+{% for team in teams %}
+<a href="{% url 'team_info' team.short_name %}">{{team.persian_name}}</a><br><br>
+{% endfor %}

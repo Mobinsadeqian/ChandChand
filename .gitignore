@@ -1,0 +1,46 @@
+# ==========================================
+# Python & Django .gitignore
+# ==========================================
+
+# 1. فایل‌های موقت و کش پایتون (Python Bytecode & Cache)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 2. محیط مجازی (Virtual Environment)
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# 3. دیتابیس محلی جنگو و فایل‌های محیطی (Database & Environment Variables)
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+.env
+*.sqlite3
+
+# 4. فایل‌های استاتیک و رسانه‌ای آپلود شده (Media & Static Files)
+/media/
+/staticfiles/
+
+# 5. تنظیمات ادیتورها (VS Code & PyCharm)
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 6. فایل‌های سیستم‌عامل (Windows & macOS System Files)
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# 7. لاگ‌ها و فایل‌های موقت
+*.log
+*.tmp
+.cache/
