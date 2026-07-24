@@ -77,3 +77,26 @@ class Match(models.Model):
     class Meta:
         verbose_name = "بازی"
         verbose_name_plural = "بازی‌ها"
+
+
+class Standing(models.Model):
+    league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="standings")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    position = models.PositiveIntegerField()
+    played = models.PositiveIntegerField(default=0)
+    won = models.PositiveIntegerField(default=0)
+    drawn = models.PositiveIntegerField(default=0)
+    lost = models.PositiveIntegerField(default=0)
+    points = models.IntegerField(default=0)
+    goals_for = models.IntegerField(default=0)
+    goals_against = models.IntegerField(default=0)
+    goal_difference = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['position']
+        verbose_name = "رده‌بندی تیم"
+        verbose_name_plural = "جدول‌های رده‌بندی"
+
+    def __str__(self):
+        return f"{self.league.name} - {self.position}. {self.team.name}"
+                

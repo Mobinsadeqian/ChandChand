@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-{% load jalali_tags %}
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ team.persian_name|default:team.name }} | اطلاعات تیم</title>
+    <title>{{ team.persian_name|default:team.name }} | چندچند</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -29,13 +28,13 @@
     <nav class="bg-slate-800/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-4">
                     <a href="{% url 'home' %}" class="text-2xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
                         چندچند ⚽
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'home' %}" class="text-xs md:text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl transition-colors">
+                    <a href="{% url 'home' %}" class="text-xs md:text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-1">
                         ← بازگشت به صفحه اصلی
                     </a>
                 </div>
@@ -44,80 +43,112 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <main class="flex-grow max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
         <!-- Team Header Card -->
-        <div class="bg-gradient-to-br from-blue-900/40 to-slate-800 rounded-2xl p-8 mb-10 border border-slate-700 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-right">
-            <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 mb-8 border border-slate-700 shadow-xl flex items-center justify-between">
+            <div class="flex items-center gap-5">
                 {% if team.crest_url %}
-                    <img src="{{ team.crest_url }}" alt="{{ team.name }}" class="w-20 h-20 object-contain drop-shadow-md">
+                    <img src="{{ team.crest_url }}" alt="{{ team.name }}" class="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow">
                 {% else %}
-                    <div class="w-20 h-20 bg-slate-700 rounded-2xl flex items-center justify-center text-3xl shadow-inner">🛡️</div>
+                    <div class="w-16 h-16 md:w-20 md:h-20 bg-slate-700 rounded-xl flex items-center justify-center text-3xl">
+                        🛡️
+                    </div>
                 {% endif %}
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2">{{ team.persian_name|default:team.name }}</h1>
-                    <p class="text-slate-400 text-sm">نام انگلیسی: {{ team.name }}</p>
+                    <h1 class="text-xl md:text-2xl font-bold text-white mb-1">
+                        {{ team.persian_name|default:team.name }}
+                    </h1>
+                    <p class="text-slate-400 text-xs font-mono">
+                        {{ team.name }}
+                    </p>
                 </div>
-            </div>
-        </div>
-
-        <!-- Home Matches Section -->
-        <div class="mb-12">
-            <div class="flex items-center mb-6">
-                <div class="w-2 h-6 bg-blue-500 rounded-full ml-3"></div>
-                <h2 class="text-2xl font-bold text-white">بازی‌های در خانه (میزبان)</h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for match in home_matches %}
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 hover:border-blue-500/50 transition-all shadow-md">
-                    <div class="text-xs text-blue-400 mb-2 font-medium">
-                        {{ match.league.persian_name|default:match.league.name }}
-                    </div>
-                    <div class="flex justify-between items-center my-3 text-sm md:text-base font-semibold">
-                        <span class="text-emerald-400">{{ match.home_team.persian_name|default:match.home_team.name }}</span>
-                        <span class="text-slate-500 font-mono text-xs px-2 py-1 bg-slate-900 rounded">VS</span>
-                        <span class="text-slate-300">{{ match.away_team.persian_name|default:match.away_team.name }}</span>
-                    </div>
-                    <div class="text-xs text-slate-400 pt-2 border-t border-slate-700/60 flex justify-between items-center">
-                        <span>زمان:</span>
-                        <span class="font-mono text-slate-300">{{ match.starting_at|to_jalali }}</span>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="col-span-full bg-slate-800/40 rounded-xl p-6 text-center border border-slate-700 border-dashed text-slate-400">
-                    هیچ بازی خانگی ثبت نشده است.
-                </div>
-                {% endfor %}
+            <div class="bg-slate-800 border border-slate-700 px-4 py-2 rounded-xl text-center">
+                <span class="text-[11px] text-slate-400 block">تعداد بازی‌ها</span>
+                <span class="text-lg font-bold text-emerald-400 font-mono">{{ matches|length }}</span>
             </div>
         </div>
 
-        <!-- Away Matches Section -->
+        <!-- Matches Section -->
         <div>
-            <div class="flex items-center mb-6">
-                <div class="w-2 h-6 bg-purple-500 rounded-full ml-3"></div>
-                <h2 class="text-2xl font-bold text-white">بازی‌های خارج از خانه (میهمان)</h2>
-            </div>
+            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                <span class="w-2 h-5 bg-blue-500 rounded-full"></span>
+                برنامه و نتایج مسابقات (به ترتیب زمانی)
+            </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {% for match in away_matches %}
-                <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 hover:border-purple-500/50 transition-all shadow-md">
-                    <div class="text-xs text-purple-400 mb-2 font-medium">
-                        {{ match.league.persian_name|default:match.league.name }}
+            <div class="space-y-4">
+                {% for match in matches %}
+                <div class="bg-slate-800/90 border border-slate-700 hover:border-slate-600 transition-all rounded-xl p-4 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                    
+                    <!-- اطلاعات لیگ و برچسب خانه/خارج خانه -->
+                    <div class="flex sm:flex-col items-center sm:items-start justify-between w-full sm:w-1/4 border-b sm:border-b-0 sm:border-l border-slate-700/60 pb-2 sm:pb-0 sm:pl-4">
+                        <span class="text-xs text-slate-400 font-medium">
+                            {{ match.league.persian_name|default:match.league.name }}
+                        </span>
+                        
+                        <!-- نشانگر بازی در خانه یا خارج از خانه -->
+                        <div class="mt-1">
+                            {% if match.home_team == team %}
+                                <span class="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[11px] px-2.5 py-0.5 rounded-full font-medium">
+                                    🏠 بازی خانه
+                                </span>
+                            {% else %}
+                                <span class="bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[11px] px-2.5 py-0.5 rounded-full font-medium">
+                                    ✈️ بازی خارج خانه
+                                </span>
+                            {% endif %}
+                        </div>
                     </div>
-                    <div class="flex justify-between items-center my-3 text-sm md:text-base font-semibold">
-                        <span class="text-slate-300">{{ match.home_team.persian_name|default:match.home_team.name }}</span>
-                        <span class="text-slate-500 font-mono text-xs px-2 py-1 bg-slate-900 rounded">VS</span>
-                        <span class="text-emerald-400">{{ match.away_team.persian_name|default:match.away_team.name }}</span>
+
+                    <!-- بخش تیم‌ها و نتیجه -->
+                    <div class="flex items-center justify-between w-full sm:w-3/4 gap-2">
+                        
+                        <!-- تیم میزبان -->
+                        <div class="flex items-center gap-2 w-2/5 justify-end text-left">
+                            <a href="{% url 'team_info' match.home_team.short_name %}"><span class="text-xs md:text-sm truncate {% if match.home_team == team %}font-bold text-emerald-400{% else %}text-slate-300{% endif %}">
+                                {{ match.home_team.persian_name|default:match.home_team.name }}
+                            </span></a>
+                            {% if match.home_team.crest_url %}
+                                <img src="{{ match.home_team.crest_url }}" class="w-5 h-5 object-contain flex-shrink-0">
+                            {% endif %}
+                        </div>
+
+                        <!-- نتیجه یا تاریخ/زمان -->
+                        <div class="w-1/5 flex flex-col items-center justify-center">
+                            {% if match.status == 'FINISHED' %}
+                                <div class="bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg text-emerald-400 font-mono font-bold text-sm shadow-inner">
+                                    {{ match.home_score }} - {{ match.away_score }}
+                                </div>
+                            {% elif match.status == 'SCHEDULED' or match.status == 'TIMED' %}
+                                <div class="bg-slate-700/60 text-slate-300 px-2.5 py-1 rounded-lg text-[11px] font-mono text-center">
+                                    {% load jalali_tags %}
+                                    {{ match.starting_at|to_jalali }}
+                                </div>
+                            {% else %}
+                                <div class="bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg text-amber-400 font-bold text-xs">
+                                    VS
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- تیم مهمان -->
+                        <div class="flex items-center gap-2 w-2/5 text-right">
+                            {% if match.away_team.crest_url %}
+                                <img src="{{ match.away_team.crest_url }}" class="w-5 h-5 object-contain flex-shrink-0">
+                            {% endif %}
+                            <a href="{% url 'team_info' match.away_team.short_name %}"><span class="text-xs md:text-sm truncate {% if match.away_team == team %}font-bold text-emerald-400{% else %}text-slate-300{% endif %}">
+                                {{ match.away_team.persian_name|default:match.away_team.name }}
+                            </span></a>
+                        </div>
+
                     </div>
-                    <div class="text-xs text-slate-400 pt-2 border-t border-slate-700/60 flex justify-between items-center">
-                        <span>زمان:</span>
-                        <span class="font-mono text-slate-300">{{ match.starting_at|to_jalali }}</span>
-                    </div>
+
                 </div>
                 {% empty %}
-                <div class="col-span-full bg-slate-800/40 rounded-xl p-6 text-center border border-slate-700 border-dashed text-slate-400">
-                    هیچ بازی خارج از خانه‌ای ثبت نشده است.
+                <div class="bg-slate-800/50 rounded-xl p-8 text-center border border-slate-700 border-dashed">
+                    <p class="text-slate-400 text-sm">هیچ مسابقه‌ای برای این تیم یافت نشد.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -126,7 +157,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-900 mt-12 py-8 text-center text-slate-500 text-sm">
+    <footer class="border-t border-slate-800 bg-slate-900 mt-12 py-6 text-center text-slate-500 text-xs">
         <p>پروژه چندچند | توسعه داده شده با ❤️ و Django</p>
     </footer>
 

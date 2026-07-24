@@ -1,7 +1,7 @@
 import requests
 
 from django.core.management.base import BaseCommand
-from matches.models import League, Team, Season, Match
+from matches.models import League, Team, Season, Match, Standing
 
 class Command(BaseCommand):
     help = "دریافت اطلاعات لیگ‌های مختلف از API و ذخیره در دیتابیس"
@@ -98,3 +98,45 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.ERROR(f'خطا در دریافت اطلاعات. کد ارور: {response.status_code}'))
             self.stdout.write(response.text)
+
+        standing_url = f"https://api.football-data.org/v4/competitions/{league_code}/standings"
+        self.stdout.write(self.style.WARNING("در حال دریافت جدول امتیازات..."))
+
+        standing_response = requests.get(standing_url, headers=headers)
+
+        if standing_response.status_code == 200:
+            standings_data = standing_response.json()
+
+            if standings_data.get('standings'):
+                table = standings_data['standings'][0].get('table', [])
+
+                for item in table:
+                    team_data = item['team']
+                    team, _ = Team.objects.get_or_create(
+                        api_id = team_data['id'],
+                        defaults={
+                            'name': team_data['name'],
+                            'short_name': team_data.get('short_name', team_data['name']),
+                            'crest_url': team_data.get('crest', ''),
+                        }
+                    )
+
+                    Standing.objects.update_or_create(
+                        league=league,
+                        team=team,
+                        defaults={
+                            'position': item['position'],
+                            'played': item['playedGames'],
+                            'won': item['won'],
+                            'drawn': item['draw'],
+                            'lost': item['lost'],
+                            'points': item['points'],
+                            'goals_for': item['goalsFor'],
+                            'goals_against': item['goalsAgainst'],
+                            'goal_difference': item['goalDifference'],
+                        }
+                    )
+                self.stdout.write(self.style.SUCCESS(f'جدول رده‌بندی لیگ {league_code} با موفقیت بروزرسانی شد!'))
+
+        else:
+                self.stdout.write(self.style.ERROR(f'خطا در دریافت جدول امتیازات. کد ارور: {standing_response.status_code}'))    

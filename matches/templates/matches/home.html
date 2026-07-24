@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!-- ویجت نمایش تاریخ امروز -->
+<div class="flex items-center justify-center gap-2 bg-slate-800/90 border border-slate-700/80 px-4 py-2 rounded-full w-fit mx-auto mb-6 shadow-md text-xs md:text-sm text-slate-300">
+    <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span>
+    <span>امروز:</span>
+    <span class="font-bold text-emerald-400 font-mono">{{ today_jalali|date:"Y/m/d" }}</span>
+</div>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
