@@ -14,27 +14,31 @@
     <style>
         body {
             font-family: 'Vazirmatn', sans-serif;
-            background-color: #0f172a; /* slate-900 */
-            color: #f8fafc; /* slate-50 */
+            background-color: #f8fafc; /* slate-50 (پس‌زمینه روشن) */
+            color: #1e293b; /* slate-800 */
         }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 5px; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <!-- Header / Navbar -->
-    <nav class="bg-slate-800/80 backdrop-blur-md sticky top-0 z-50 border-b border-slate-700 shadow-lg">
+    <nav class="bg-white sticky top-0 z-50 border-b border-slate-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between h-20">
                 <div class="flex items-center gap-3">
-                    <a href="{% url 'home' %}" class="text-2xl font-black bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-                        چندچند ⚽
+                    <a href="{% url 'home' %}" class="flex items-center gap-2 group">
+                        <span class="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent py-1.5 leading-normal inline-block">
+                            چندچند
+                        </span>
+                        <!-- ایموجی توپ با رنگ واقعی خودش -->
+                        <span class="text-2xl">⚽</span>
                     </a>
                 </div>
                 <div>
-                    <a href="{% url 'home' %}" class="text-xs md:text-sm bg-slate-700 hover:bg-slate-600 text-slate-200 px-4 py-2 rounded-xl transition-colors">
+                    <a href="{% url 'home' %}" class="text-sm md:text-base bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-xl transition-colors border border-slate-300">
                         ← بازگشت به صفحه اصلی
                     </a>
                 </div>
@@ -43,62 +47,147 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
         
         <!-- League Header Card -->
-        <div class="bg-gradient-to-br from-indigo-900/40 to-slate-800 rounded-2xl p-8 mb-10 border border-slate-700 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-right">
+        <div class="bg-white rounded-2xl p-6 md:p-8 mb-10 border border-slate-200 shadow-md flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-right">
             <div class="flex flex-col md:flex-row items-center gap-6">
                 {% if league_info.logo_url %}
-                    <img src="{{ league_info.logo_url }}" alt="{{ league_info.name }}" class="w-20 h-20 object-contain drop-shadow-md">
+                    <img src="{{ league_info.logo_url }}" alt="{{ league_info.name }}" class="w-24 h-24 object-contain drop-shadow">
                 {% else %}
-                    <div class="w-20 h-20 bg-slate-700 rounded-2xl flex items-center justify-center text-3xl shadow-inner">🏆</div>
+                    <div class="w-24 h-24 bg-blue-50 rounded-2xl flex items-center justify-center text-4xl border border-blue-100">🏆</div>
                 {% endif %}
                 <div>
-                    <h1 class="text-3xl md:text-4xl font-extrabold text-white mb-2">{{ league_info.persian_name|default:league_info.name }}</h1>
-                    <p class="text-slate-400 text-sm">کشور: {{ league_info.country }}</p>
+                    <h1 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">{{ league_info.persian_name|default:league_info.name }}</h1>
+                    <p class="text-slate-600 text-base font-medium">کشور: <span class="text-slate-900 font-bold">{{ league_info.country }}</span></p>
                 </div>
             </div>
         </div>
 
-        <!-- Matches List Section -->
+        <!-- Standings Table Section (جدول رده‌بندی) -->
+        <div class="mb-12">
+            <div class="flex items-center mb-6">
+                <div class="w-3 h-8 bg-blue-600 rounded-full ml-3"></div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">جدول رده‌بندی لیگ</h2>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-x-auto">
+                <table class="w-full text-right text-base border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 text-sm md:text-base font-bold">
+                            <th class="py-4 px-3 text-center">رتبه</th>
+                            <th class="py-4 px-4">تیم</th>
+                            <th class="py-4 px-3 text-center">بازی</th>
+                            <th class="py-4 px-3 text-center">برد</th>
+                            <th class="py-4 px-3 text-center">مساوی</th>
+                            <th class="py-4 px-3 text-center">باخت</th>
+                            <th class="py-4 px-3 text-center hidden sm:table-cell">گل+</th>
+                            <th class="py-4 px-3 text-center hidden sm:table-cell">گل-</th>
+                            <th class="py-4 px-3 text-center">تفاضل</th>
+                            <th class="py-4 px-4 text-center font-black text-blue-700 bg-blue-50">امتیاز</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 font-medium">
+                        {% for row in standing_tables %}
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <!-- رتبه -->
+                            <td class="py-4 px-3 text-center font-bold text-slate-700">
+                                <span class="w-8 h-8 inline-flex items-center justify-center rounded-lg {% if row.position <= 3 %}bg-amber-100 text-amber-800 font-black{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                    {{ row.position }}
+                                </span>
+                            </td>
+
+                            <!-- نام تیم -->
+                            <td class="py-4 px-4 font-bold text-slate-900 text-base md:text-lg">
+                                <a href="{% url 'team_info' row.team.short_name %}" class="hover:text-blue-600 flex items-center gap-2 transition-colors">
+                                    {% if row.team.crest_url %}
+                                        <img src="{{ row.team.crest_url }}" class="w-6 h-6 object-contain flex-shrink-0">
+                                    {% endif %}
+                                    {{ row.team.persian_name|default:row.team.name }}
+                                </a>
+                            </td>
+
+                            <!-- آمار -->
+                            <td class="py-4 px-3 text-center text-slate-700 font-mono text-base">{{ row.played }}</td>
+                            <td class="py-4 px-3 text-center text-emerald-600 font-mono text-base font-bold">{{ row.won }}</td>
+                            <td class="py-4 px-3 text-center text-slate-600 font-mono text-base">{{ row.drawn }}</td>
+                            <td class="py-4 px-3 text-center text-rose-600 font-mono text-base">{{ row.lost }}</td>
+                            <td class="py-4 px-3 text-center text-slate-600 font-mono text-base hidden sm:table-cell">{{ row.goals_for }}</td>
+                            <td class="py-4 px-3 text-center text-slate-600 font-mono text-base hidden sm:table-cell">{{ row.goals_against }}</td>
+                            <td class="py-4 px-3 text-center font-mono text-base dir-ltr {% if row.goal_difference > 0 %}text-emerald-600 font-bold{% elif row.goal_difference < 0 %}text-rose-600{% else %}text-slate-600{% endif %}">
+                                {{ row.goal_difference }}
+                            </td>
+                            
+                            <!-- امتیاز -->
+                            <td class="py-4 px-4 text-center font-mono text-lg font-black text-blue-700 bg-blue-50/60">
+                                {{ row.points }}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="10" class="py-8 text-center text-slate-500 font-medium">
+                                جدول رده‌بندی برای این لیگ ثبت نشده است.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Matches List Section (برنامه مسابقات) -->
         <div>
             <div class="flex items-center mb-6">
-                <div class="w-2 h-6 bg-indigo-500 rounded-full ml-3"></div>
-                <h2 class="text-2xl font-bold text-white">برنامه مسابقات لیگ</h2>
+                <div class="w-3 h-8 bg-indigo-600 rounded-full ml-3"></div>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900">برنامه مسابقات لیگ</h2>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 {% for match in matches %}
-                <div class="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:border-indigo-500/50 transition-all shadow-md group">
-                    <div class="flex justify-between items-center my-2 text-sm md:text-base font-semibold">
-                        <span class="text-slate-200 group-hover:text-blue-400 transition-colors"><a href="{% url 'team_info' match.home_team.short_name %}">{{ match.home_team.persian_name|default:match.home_team.name }}</a></span>
+                <div class="bg-white rounded-2xl p-5 border border-slate-200 hover:border-blue-400 hover:shadow-md transition-all shadow-sm">
+                    
+                    <div class="flex justify-between items-center my-3 text-base md:text-lg font-bold">
+                        <!-- میزبان -->
+                        <span class="text-slate-800 hover:text-blue-600 transition-colors w-2/5 text-right">
+                            <a href="{% url 'team_info' match.home_team.short_name %}">
+                                {{ match.home_team.persian_name|default:match.home_team.name }}
+                            </a>
+                        </span>
                         
-                        <!-- Score or VS Box -->
+                        <!-- نتیجه یا VS -->
                         {% if match.status == 'SCHEDULED' or match.status == 'TIMED' %}
-                            <span class="text-slate-500 font-mono text-xs px-3 py-1 bg-slate-900 rounded-lg">VS</span>
+                            <span class="text-slate-500 font-mono text-sm font-bold px-3 py-1.5 bg-slate-100 rounded-xl border border-slate-200">VS</span>
                         {% else %}
-                            <div class="bg-slate-900 text-emerald-400 px-3 py-1 rounded-lg text-sm font-bold shadow-inner flex items-center gap-2">
+                            <div class="bg-slate-100 border border-slate-200 text-blue-700 px-4 py-1.5 rounded-xl text-base md:text-lg font-black font-mono shadow-inner flex items-center gap-2">
                                 <span>{{ match.home_score|default:"0" }}</span>
-                                <span class="text-slate-500">-</span>
+                                <span class="text-slate-400">-</span>
                                 <span>{{ match.away_score|default:"0" }}</span>
                             </div>
                         {% endif %}
 
-                        <span class="text-slate-200 group-hover:text-blue-400 transition-colors"><a href="{% url 'team_info' match.away_team.short_name %}">{{ match.away_team.persian_name|default:match.away_team.name }}</a></span>
-                    </div>
-
-                    <div class="text-xs text-slate-400 pt-3 mt-3 border-t border-slate-700/60 flex justify-between items-center">
-                        <span class="bg-slate-900 text-slate-300 px-2.5 py-1 rounded">{{ match.get_status_display }}</span>
-                        {% load jalali_tags %}
-
-                        
-                        <span class="bg-slate-700 text-slate-300 px-3 py-1 rounded-lg text-sm font-mono">
-                            {{ match.starting_at|to_jalali }}
+                        <!-- مهمان -->
+                        <span class="text-slate-800 hover:text-blue-600 transition-colors w-2/5 text-left">
+                            <a href="{% url 'team_info' match.away_team.short_name %}">
+                                {{ match.away_team.persian_name|default:match.away_team.name }}
+                            </a>
                         </span>
                     </div>
+
+                    <!-- تاریخ و وضعیت -->
+                    <div class="text-sm text-slate-600 pt-4 mt-3 border-t border-slate-100 flex justify-between items-center">
+                        <span class="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-lg border border-slate-200">
+                            {{ match.get_status_display }}
+                        </span>
+                        
+                        {% load jalali_tags %}
+                        <span class="bg-blue-50 text-blue-800 border border-blue-100 font-bold px-3.5 py-1.5 rounded-xl text-sm md:text-base font-mono">
+                            📅 {{ match.starting_at|to_jalali }}
+                        </span>
+                    </div>
+
                 </div>
                 {% empty %}
-                <div class="col-span-full bg-slate-800/40 rounded-xl p-8 text-center border border-slate-700 border-dashed text-slate-400">
+                <div class="col-span-full bg-white rounded-2xl p-8 text-center border border-slate-200 text-slate-500 text-lg font-medium">
                     هیچ مسابقه‌ای برای این لیگ یافت نشد 😴
                 </div>
                 {% endfor %}
@@ -108,7 +197,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800 bg-slate-900 mt-12 py-8 text-center text-slate-500 text-sm">
+    <footer class="border-t border-slate-200 bg-white mt-16 py-8 text-center text-slate-600 text-base font-medium">
         <p>پروژه چندچند | توسعه داده شده با ❤️ و Django</p>
     </footer>
 

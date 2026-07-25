@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import League, Team, Season, Match
+from .models import League, Team, Season, Match, Standing
 from django.utils import timezone
 import jdatetime
 from zoneinfo import ZoneInfo
@@ -22,10 +22,12 @@ def home(request):
 def league_page(request, league_code):
     league_info = get_object_or_404(League, code=league_code)
     matches = Match.objects.filter(league=league_info).order_by('starting_at')
+    standing_tables = Standing.objects.filter(league=league_info).select_related("team")
 
     context = {
         "league_info": league_info,
-        'matches': matches
+        'matches': matches,
+        'standing_tables': standing_tables
     }
     return render(request, 'matches/league.html', context)
 
@@ -43,3 +45,4 @@ def team_info(request, short_name):
         'matches': matches,
     }
     return render(request, 'matches/team_info.html', context)
+
