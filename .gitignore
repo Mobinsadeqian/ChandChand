@@ -17,11 +17,11 @@ env.bak/
 venv.bak/
 
 # 3. دیتابیس محلی جنگو و فایل‌های محیطی (Database & Environment Variables)
-db.sqlite3
-db.sqlite3-journal
+#db.sqlite3
+#db.sqlite3-journal
 local_settings.py
 .env
-*.sqlite3
+#*.sqlite3
 
 # 4. فایل‌های استاتیک و رسانه‌ای آپلود شده (Media & Static Files)
 /media/
