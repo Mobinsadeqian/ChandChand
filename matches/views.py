@@ -4,6 +4,10 @@ from django.utils import timezone
 import jdatetime
 from zoneinfo import ZoneInfo
 from django.db.models import Q
+from django.http import JsonResponse
+from django.conf import settings
+from .services import fetch_and_update_api_data
+
 def home(request):
     teams = Team.objects.all()
     leagues = League.objects.all()
@@ -46,3 +50,15 @@ def team_info(request, short_name):
     }
     return render(request, 'matches/team_info.html', context)
 
+
+def trigger_fetch_matches(request):
+    token = request.GET.get('token')
+    CRON_TOKEN = "my_super_secret_key_123"
+
+    if token != CRON_TOKEN:
+        return JsonResponse({'status': 'unauthorized'}, status=401)
+    try:
+        fetch_and_update_api_data()
+        return JsonResponse({'status': 'success', 'message': 'Data updated successfully!'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
